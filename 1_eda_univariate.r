@@ -5,6 +5,8 @@ source("utils.r")
 df_raw <- read_csv("data.csv")
 heart <- get_df(df_raw)
 
+summary(heart)
+
 # target ------------------------------------------------------------------
 
 heart %>%
