@@ -57,3 +57,33 @@ ggplot(data = heart, mapping = aes(x = target, y = oldpeak)) +
 
 ggplot(data = heart, mapping = aes(x = target, y = ca)) +
   geom_boxplot()
+
+# two categorial ----------------------------------------------------------
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = sex))
+table(heart$sex, heart$target)
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = restecg))
+table(heart$restecg, heart$target)
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = fbs))
+table(heart$fbs, heart$target)
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = exang))
+table(heart$exang, heart$target)
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = cp))
+table(heart$cp, heart$target)
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = slope))
+table(heart$slope, heart$target)
+
+ggplot(data = heart) +
+  geom_count(mapping = aes(x = target, y = thal))
+table(heart$thal, heart$target)
