@@ -87,3 +87,11 @@ table(heart$slope, heart$target)
 ggplot(data = heart) +
   geom_count(mapping = aes(x = target, y = thal))
 table(heart$thal, heart$target)
+
+heart %>%
+  count(sex, target)
+
+heart %>%
+  count(sex, target) %>%
+  ggplot(mapping = aes(x = sex, y = target)) +
+  geom_tile(mapping = aes(fill = n)) 
