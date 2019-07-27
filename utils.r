@@ -20,6 +20,22 @@ get_df <- function(df){
     )
 }
 
+get_training_df <- function(df) {
+  set.seed(25)
+  inTraining <- createDataPartition(df$target, p = .80, list = FALSE)
+  training <- df[ inTraining,]
+  # testing  <- df[-inTraining,]
+  return(training)
+}
+
+get_test_df <- function(df) {
+  set.seed(25)
+  inTraining <- createDataPartition(df$target, p = .80, list = FALSE)
+  # training <- df[ inTraining,]
+  testing  <- df[-inTraining,]
+  return(testing)
+}
+
 get_varibale_description <- function(variable) {
   if (variable == "cp") {
     return("chest pain type

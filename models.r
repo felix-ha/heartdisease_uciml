@@ -1,41 +1,50 @@
 library(tidyverse)
 library(precrec)
 library(MLmetrics)
+library(caret)
 source("utils.r")
+
+visualize_metrics <- function(df, fit, threshold) {
+  y_probabilities <- unname(predict(fit, df,  type="response"))
+  y_predicted <- ifelse(y_probabilities > threshold, 1, 0)
+  y_true <- ifelse(df$target == "no_disease", 0, 1)
+  
+  accuracy <- Accuracy(y_true = y_true, y_pred = y_predicted)
+  precision <- Precision(y_true = y_true, y_pred = y_predicted, positive = "1")
+  recall <- Recall(y_true = y_true, y_pred = y_predicted, positive = "1")
+  f_1 <- F1_Score(y_true = y_true, y_pred = y_predicted, positive = "1")
+  confusion_matrix <- ConfusionMatrix(y_true = y_true, y_pred = y_predicted)
+  auc <- AUC(y_true = y_true, y_pred = y_probabilities)
+  
+  print(paste("Metrics for fit with threshold", threshold))
+  print("Confusion Matrix    : ")
+  print(confusion_matrix)
+  print(paste("Accuracy  : ", round(accuracy, 3)))
+  print(paste("Precision : ", round(precision, 3)))
+  print(paste("Recall    : ", round(recall, 3)))
+  print(paste("F1        : ", round(f_1, 3)))
+  print(paste("AUC       : ", round(auc, 3)))
+  
+  precrec_obj <- evalmod(scores = y_probabilities, labels = y_true)
+  autoplot(precrec_obj)
+}
 
 df_raw <- read_csv("data.csv")
 heart <- get_df(df_raw)
+heart <- get_training_df(heart)
+heart_test <- get_test_df(heart)
 
-fit=glm(target ∼.,
-             data=heart ,family =binomial(link = "logit"))
-summary(fit)
+y_true <- ifelse(heart_test$target == "no_disease", 0, 1)
 
-
-fit$fitted.values
-
-pred <- ifelse(fit$fitted.values < 0.5, "no_disease", "disease")
-
-accuracy <- Accuracy(y_true = heart$target, y_pred = pred)
-precision <- Precision(y_true = heart$target, y_pred = pred, positive = "disease")
-recall <- Recall(y_true = heart$target, y_pred = pred, positive = "disease")
-f_1 <- F1_Score(y_true = heart$target, y_pred = pred, positive = "disease")
-auc <- AUC(y_true = ifelse(heart$target == "no_disease", 0, 1)
-           , y_pred = fit$fitted.values)
-confusion_matrix <- ConfusionMatrix(y_true = ifelse(heart$target == "no_disease", 0, 1)
-                                    , y_pred = fit$fitted.values)
+fit <- glm(target ∼.,
+        data=heart ,family =binomial(link = "logit"))
 
 
+y_probabilities <- unname(predict(fit, heart_test,  type="response"))
+auc <- AUC(y_true = y_true, y_pred = y_probabilities)
+print(auc)
 
-print(paste("Accuracy  : ", round(accuracy, 3)))
-print(paste("Precision : ", round(precision, 3)))
-print(paste("Recall    : ", round(recall, 3)))
-print(paste("F1        : ", round(f_1, 3)))
-print(paste("AUC       : ", round(auc, 3)))
+#folds <- createFolds(heart$target)
 
-precrec_obj <- evalmod(scores = fit$fitted.values, labels = ifelse(heart$target == "no_disease", 0, 1))
-autoplot(precrec_obj)
-
-# print("Confusion Matrix    : ")
-# print(confusion_matrix)
 
       
