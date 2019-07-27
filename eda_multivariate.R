@@ -95,3 +95,26 @@ heart %>%
   count(sex, target) %>%
   ggplot(mapping = aes(x = sex, y = target)) +
   geom_tile(mapping = aes(fill = n)) 
+
+
+# two numerical -----------------------------------------------------------
+
+# thalach maximum heart rate achieved
+# trestbps resting blood pressure (in mm Hg on admission to the hospital)
+
+ggplot(data = heart, mapping = aes(x=thalach, y=trestbps))+
+  geom_point(alpha = 1/2)
+
+ggplot(data = heart, mapping = aes(x=thalach, y=trestbps))+
+  geom_bin2d()
+
+# install.packages("hexbin")
+ggplot(data = heart, mapping = aes(x=thalach, y=trestbps))+
+  geom_hex()
+
+ggplot(data = heart, mapping = aes(x=thalach, y=trestbps))+
+  geom_boxplot(mapping = aes(group = cut_width(thalach, 10)))
+
+# cut_number: same number of point in each bin 
+ggplot(data = heart, mapping = aes(x=thalach, y=trestbps))+
+  geom_boxplot(mapping = aes(group = cut_number(thalach, 15)))
