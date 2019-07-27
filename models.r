@@ -45,7 +45,7 @@ set.seed(25)
 number_of_folds <- 10
 folds <- createFolds(heart$target, k = number_of_folds)
 
-models <- c("log_reg", "log_small", "tree") 
+models <- c("log_reg", "log_best_subset", "tree") 
 number_of_models <- length(models)
 
 
@@ -69,8 +69,8 @@ for(model in models){
       # using ratio of poisitive labels as probability
       y_probabilities <- unname(predict(fit, test)[,2])
     }
-    if (model == "log_small"){
-      fit <- glm(target ∼ cp + sex + restecg + ca + oldpeak, data=training, family =binomial(link = "logit"))
+    if (model == "log_best_subset"){
+      fit <- glm(target ~ oldpeak + cp + ca + thal + thalach + slope, data=training, family =binomial(link = "logit"))
       y_probabilities <- unname(predict(fit, test,  type="response"))
     }
   
