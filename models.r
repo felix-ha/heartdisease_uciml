@@ -45,7 +45,7 @@ set.seed(25)
 number_of_folds <- 10
 folds <- createFolds(heart$target, k = number_of_folds)
 
-models <- c("log_reg", "tree") 
+models <- c("log_reg", "log_small", "tree") 
 number_of_models <- length(models)
 
 
@@ -68,7 +68,11 @@ for(model in models){
       fit <- rpart(target ∼., data=training, method = "class")
       # using ratio of poisitive labels as probability
       y_probabilities <- unname(predict(fit, test)[,2])
-      }
+    }
+    if (model == "log_small"){
+      fit <- glm(target ∼ cp + sex + restecg + ca + oldpeak, data=training, family =binomial(link = "logit"))
+      y_probabilities <- unname(predict(fit, test,  type="response"))
+    }
   
     auc <- AUC(y_true = y_true, y_pred = y_probabilities)
     result %<>%
@@ -82,6 +86,11 @@ for(model in models){
 ggplot(data = result, mapping = aes(y = auc, x = model)) +
   geom_boxplot() + 
   expand_limits(y = 0)
+
+result %>%
+  group_by(model) %>%
+  summarize(AVG = mean(auc),
+            Median = median(auc))
 
 
 
