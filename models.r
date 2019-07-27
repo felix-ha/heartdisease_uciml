@@ -2,7 +2,11 @@ library(tidyverse)
 library(precrec)
 library(MLmetrics)
 library(caret)
+library(rpart)
+library(magrittr)
+theme_update(plot.title = element_text(hjust = 0.5))
 source("utils.r")
+
 
 visualize_metrics <- function(df, fit, threshold) {
   y_probabilities <- unname(predict(fit, df,  type="response"))
@@ -29,22 +33,56 @@ visualize_metrics <- function(df, fit, threshold) {
   autoplot(precrec_obj)
 }
 
+
 df_raw <- read_csv("data.csv")
 heart <- get_df(df_raw)
 heart <- get_training_df(heart)
-heart_test <- get_test_df(heart)
 
-y_true <- ifelse(heart_test$target == "no_disease", 0, 1)
+# do not use test set while model optimization!
+# heart_test <- get_test_df(heart)
 
-fit <- glm(target ∼.,
-        data=heart ,family =binomial(link = "logit"))
+set.seed(25)
+number_of_folds <- 10
+folds <- createFolds(heart$target, k = number_of_folds)
 
-
-y_probabilities <- unname(predict(fit, heart_test,  type="response"))
-auc <- AUC(y_true = y_true, y_pred = y_probabilities)
-print(auc)
-
-#folds <- createFolds(heart$target)
+models <- c("log_reg", "tree") 
+number_of_models <- length(models)
 
 
-      
+result <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(result) <- c("model", "auc")
+result <- as_tibble(result)
+
+for(model in models){
+  for(fold_index in c(1:number_of_folds)){
+    training <- heart[-folds[[fold_index]],]
+    test <- heart[folds[[fold_index]],]
+    
+    y_true <- ifelse(test$target == "no_disease", 0, 1)
+    
+    if (model == "log_reg") {
+      fit <- glm(target ∼., data=training, family =binomial(link = "logit"))
+      y_probabilities <- unname(predict(fit, test,  type="response"))
+    }
+    if (model == "tree"){
+      fit <- rpart(target ∼., data=training, method = "class")
+      # using ratio of poisitive labels as probability
+      y_probabilities <- unname(predict(fit, test)[,2])
+      }
+  
+    auc <- AUC(y_true = y_true, y_pred = y_probabilities)
+    result %<>%
+      add_row(model = model, auc = auc)
+  }
+}
+
+
+
+
+ggplot(data = result, mapping = aes(y = auc, x = model)) +
+  geom_boxplot() + 
+  expand_limits(y = 0)
+
+
+
+
