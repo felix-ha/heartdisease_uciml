@@ -6,6 +6,8 @@ library(rpart)
 library(magrittr)
 theme_update(plot.title = element_text(hjust = 0.5))
 source("utils.r")
+library(recipes)
+library(class)
 
 
 visualize_metrics <- function(df, fit, threshold) {
@@ -37,6 +39,7 @@ visualize_metrics <- function(df, fit, threshold) {
 df_raw <- read_csv("data.csv")
 heart <- get_df(df_raw)
 heart <- get_training_df(heart)
+heart_dummies <- get_df_dummies(heart)
 
 # do not use test set while model optimization!
 # heart_test <- get_test_df(heart)
@@ -45,7 +48,7 @@ set.seed(25)
 number_of_folds <- 10
 folds <- createFolds(heart$target, k = number_of_folds)
 
-models <- c("log_reg", "log_best_subset", "tree") 
+models <- c("log_reg", "log_best_subset", "tree", "knn") 
 number_of_models <- length(models)
 
 
@@ -72,6 +75,25 @@ for(model in models){
     if (model == "log_best_subset"){
       fit <- glm(target ~ oldpeak + cp + ca + thal + thalach + slope, data=training, family =binomial(link = "logit"))
       y_probabilities <- unname(predict(fit, test,  type="response"))
+    }
+    if(model == "knn"){
+      training <- heart_dummies[-folds[[fold_index]],]
+      test <- heart_dummies[folds[[fold_index]],]
+
+      train_points <- training %>%
+        select(-target_disease)
+      
+      test_points <- test %>%
+        select(-target_disease)
+      
+      train_labels <-  unlist(training %>%
+                                select(target_disease))
+      
+      test_labels <-  unlist(test %>%
+                               select(target_disease))
+      
+      fit <- knn(train_points, test_points, train_labels, k = 50, prob = TRUE);
+      y_probabilities <- (attributes(fit)$prob)
     }
   
     auc <- AUC(y_true = y_true, y_pred = y_probabilities)

@@ -1,4 +1,5 @@
 library(tidyverse)
+library(recipes)
 
 # create clean data set: e. g. sex is a numeric vector, needs to be a factor
 get_df <- function(df){
@@ -19,6 +20,15 @@ get_df <- function(df){
               thal = factor(df$thal,levels = c(0,1,2,3), labels = c("normal", "fixed_defect", "reversable_defect", "?"))
     )
 }
+
+get_df_dummies <- function(df){
+  result <- df %>% 
+    recipe(target ~ .) %>% 
+    step_dummy(restecg, fbs, sex, exang, cp, slope, thal, target) %>% 
+    prep(training = df) %>% 
+    bake(new_data = df)
+}
+
 
 get_training_df <- function(df) {
   set.seed(25)
