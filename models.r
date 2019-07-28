@@ -92,7 +92,7 @@ for(model in models){
       test_labels <-  unlist(test %>%
                                select(target_disease))
       
-      fit <- knn(train_points, test_points, train_labels, k = 50, prob = TRUE);
+      fit <- knn(train_points, test_points, train_labels, k = 189, prob = TRUE);
       y_probabilities <- (attributes(fit)$prob)
     }
   
