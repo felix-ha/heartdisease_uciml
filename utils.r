@@ -30,7 +30,6 @@ get_df_dummies <- function(df){
     bake(new_data = df)
 }
 
-
 get_training_df <- function(df) {
   set.seed(25)
   inTraining <- createDataPartition(df$target, p = .80, list = FALSE)
@@ -103,4 +102,10 @@ get_varibale_description <- function(variable) {
     return("not set")
   }
   
+}
+
+get_opt_df <- function() {
+  df_raw <- read_csv("data.csv")
+  heart <- get_df(df_raw)
+  heart <- get_training_df(heart)
 }
