@@ -1,5 +1,6 @@
 library(tidyverse)
 library(recipes)
+library(caret)
 
 # create clean data set: e. g. sex is a numeric vector, needs to be a factor
 get_df <- function(df){
