@@ -25,8 +25,8 @@ get_training_df <- function() {
   set.seed(25)
   df_raw <- read_csv("data.csv")
   heart <- get_df(df_raw)
-  inTraining <- createDataPartition(df$target, p = .80, list = FALSE)
-  training <- df[ inTraining,]
+  inTraining <- createDataPartition(heart$target, p = .80, list = FALSE)
+  training <- heart[ inTraining,]
   # testing  <- df[-inTraining,]
   return(training)
 }
