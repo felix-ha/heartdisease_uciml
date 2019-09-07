@@ -1,33 +1,14 @@
 rm(list = ls())
 source("helpers.r")
-library(MLmetrics)
+library(tidyverse)
 library(magrittr)
+library(MLmetrics)
 
 
-learner_A <- function(training, test) {
-  name <- "log reg oldpeak"
-  y_true <- ifelse(test$target == "no_disease", 0, 1)
-  
-  fit <- glm(target ~ oldpeak, data=training, family =binomial(link = "logit"))
-  y_probabilities <- predict(fit, test,  type="response")
-  
-  auc <- AUC(y_true = y_true, y_pred = y_probabilities)
-  return(list(name = name, auc = auc))
-}
+# defining learners -------------------------------------------------------
 
-learner_B <- function(training, test) {
-  name <- "log reg chol"
-  y_true <- ifelse(test$target == "no_disease", 0, 1)
-  
-  fit <- glm(target ~ chol, data=training, family =binomial(link = "logit"))
-  y_probabilities <- predict(fit, test,  type="response")
-  
-  auc <- AUC(y_true = y_true, y_pred = y_probabilities)
-  return(list(name = name, auc = auc))
-}
-
-learner_C <- function(training, test) {
-  name <- "log reg age"
+logistic_regression_age <- function(training, test) {
+  name <- "Logistic Regression"
   y_true <- ifelse(test$target == "no_disease", 0, 1)
   
   fit <- glm(target ~ age, data=training, family =binomial(link = "logit"))
@@ -36,6 +17,17 @@ learner_C <- function(training, test) {
   auc <- AUC(y_true = y_true, y_pred = y_probabilities)
   return(list(name = name, auc = auc))
 }
+
+random_learner <- function(training, test) {
+  name <- "Random Learner"
+  y_true <- ifelse(test$target == "no_disease", 0, 1)
+  y_probabilities =   runif(length(y_true), 0, 1)
+  auc <- AUC(y_true = y_true, y_pred = y_probabilities)
+  return(list(name = name, auc = auc))
+}
+
+
+# defining cv methods -----------------------------------------------------
 
 
 cross_validation_52 <- function(learner_A, learner_B, df){
@@ -89,17 +81,17 @@ cross_validation <- function(learner_A, learner_B, df){
                          auc = vector("numeric"))
   
   for(fold_index in c(1:number_of_folds)){
-      training <- df[-folds[[fold_index]],]
-      test <- df[folds[[fold_index]],]
-      
-      result_A<- learner_A(training, test)
-      result_B <- learner_B(training, test)
-      
-      model_result %<>%
-        add_row(model = result_A[[1]], auc = result_A[[2]]) %>%
-        add_row(model = result_B[[1]], auc = result_B[[2]])
-      
-    }
+    training <- df[-folds[[fold_index]],]
+    test <- df[folds[[fold_index]],]
+    
+    result_A<- learner_A(training, test)
+    result_B <- learner_B(training, test)
+    
+    model_result %<>%
+      add_row(model = result_A[[1]], auc = result_A[[2]]) %>%
+      add_row(model = result_B[[1]], auc = result_B[[2]])
+    
+  }
   
   return(model_result)
   
@@ -133,21 +125,49 @@ plot_result <- function(model_result){
     theme_bw() + 
     theme(panel.grid.major.x = element_blank(),
           plot.title = element_text(hjust = 0)
-          )
+    )
 }
 
 
-#result <- cross_validation_selection(learner_C, learner_B)
-#plot <- plot_result(result)
 
-#model_summary <- result[["model_result"]] %>%
-#  group_by(model) %>%
-#  summarize(mean = mean(auc),
-#            median = median(auc),
-#           sd = sd(auc))
+# eda starts here ---------------------------------------------------------
 
-#print(model_summary)
-#print(plot)
+df <- get_training_df()
+
+df %>% select(age) %>% summary()
+
+ggplot(df, aes(x = age, fill = target)) + 
+  geom_density(alpha = 0.2, bw = 5) + 
+  theme_bw() + 
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+
+ggplot(df, aes(x = target, y = age)) + 
+  geom_boxplot(alpha = 0, color = "black") + 
+  geom_jitter(width = 0.05, color = "grey", alpha = 0.4) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank())
+
+
+result <- cross_validation_selection(logistic_regression_age, random_learner)
+plot <- plot_result(result)
+
+model_summary <- result[["model_result"]] %>%
+  group_by(model) %>%
+  summarize(mean = mean(auc),
+            median = median(auc),
+           sd = sd(auc))
+
+
+print(model_summary)
+print(plot)
+
+
+fit <- glm(target ~ age, data=df, family =binomial(link = "logit"))
+summary(fit)
+
+
 
 
 
