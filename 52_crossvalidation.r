@@ -137,17 +137,17 @@ plot_result <- function(model_result){
 }
 
 
-#result <- cross_validation_selection(learner_C, learner_B)
-#plot <- plot_result(result)
+result <- cross_validation_selection(learner_C, learner_B)
+plot <- plot_result(result)
 
-#model_summary <- result[["model_result"]] %>%
-#  group_by(model) %>%
-#  summarize(mean = mean(auc),
-#            median = median(auc),
-#           sd = sd(auc))
+model_summary <- result[["model_result"]] %>%
+  group_by(model) %>%
+  summarize(mean = mean(auc),
+            median = median(auc),
+           sd = sd(auc))
 
-#print(model_summary)
-#print(plot)
+print(model_summary)
+print(plot)
 
 
 
