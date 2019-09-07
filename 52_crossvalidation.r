@@ -27,15 +27,16 @@ learner_B <- function(training, test) {
 }
 
 learner_C <- function(training, test) {
-  name <- "log reg slope"
+  name <- "log reg age"
   y_true <- ifelse(test$target == "no_disease", 0, 1)
   
-  fit <- glm(target ~ slope, data=training, family =binomial(link = "logit"))
+  fit <- glm(target ~ age, data=training, family =binomial(link = "logit"))
   y_probabilities <- predict(fit, test,  type="response")
   
   auc <- AUC(y_true = y_true, y_pred = y_probabilities)
   return(list(name = name, auc = auc))
 }
+
 
 cross_validation_52 <- function(learner_A, learner_B, df){
   p_1_t <- 0
@@ -105,40 +106,48 @@ cross_validation <- function(learner_A, learner_B, df){
 }
 
 cross_validation_selection <- function(learner_A, learner_B){
-# use p = 0.81 to get equally sized sets S_1 and S_2
-df <- get_training_df(p = 0.81)
-t <- cross_validation_52(learner_A, learner_B, df)
+  # use p = 0.81 to get equally sized sets S_1 and S_2
+  df <- get_training_df(p = 0.81)
+  t <- cross_validation_52(learner_A, learner_B, df)
+  
+  df <- get_training_df(p = 0.8)
+  model_result<- cross_validation(learner_A, learner_B, df)
+  return(list(model_result = model_result, t = t))
+}
 
-df <- get_training_df(p = 0.8)
-model_result<- cross_validation(learner_A, learner_B, df)
-return(list(model_result = model_result, t = t))
+plot_result <- function(model_result){
+  model_result <- result[["model_result"]]
+  t <- result[["t"]]
+  
+  models <- (model_result %>% distinct(model))[["model"]]
+  model_result %>%
+    mutate(model = factor(model, levels = models)) %>%
+    ggplot(aes(x = model, y = auc))+
+    geom_boxplot() +
+    labs(
+      x = "Modells",
+      y = "AUC",
+      title = "Cross validation comparison of modells",
+      subtitle = paste0("5 x 2 cross validation  t statistic : ",round(t,3))
+    ) + 
+    theme_bw() + 
+    theme(panel.grid.major.x = element_blank(),
+          plot.title = element_text(hjust = 0)
+          )
 }
 
 
-result <- cross_validation_selection(learner_A, learner_C)
-model_result <- result[["model_result"]]
-t <- result[["t"]]
+result <- cross_validation_selection(learner_C, learner_B)
+plot <- plot_result(result)
 
-model_summary <- model_result %>%
+model_summary <- result[["model_result"]] %>%
   group_by(model) %>%
   summarize(mean = mean(auc),
             median = median(auc),
             sd = sd(auc))
 
-models <- (model_result %>% distinct(model))[["model"]]
-model_result %>%
-  mutate(model = factor(model, levels = models)) %>%
-  ggplot(aes(x = model, y = auc))+
-  geom_boxplot() +
-  labs(
-    x = "Modells",
-    y = "AUC",
-    title = "Cross validation comparison of modells",
-    subtitle = paste0("5 x 2 cross validation  t statistic : ",round(t,3))
-  ) + 
-  theme_bw() + 
-  theme(panel.grid.major.x = element_blank(),
-        plot.title = element_text(hjust = 0)
-        )
+print(model_summary)
+print(plot)
+
 
 
