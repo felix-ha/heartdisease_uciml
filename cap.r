@@ -3,91 +3,49 @@ source("helpers.r")
 library(tidyverse)
 library(magrittr)
 
+
+predictor <- "age"
+
 df <- get_training_df()
-df %<>% mutate(target = ifelse(df$target == "no_disease", 1, 2))
+df %<>% mutate(target = ifelse(df$target == "no_disease", 0, 1)) 
 
-df_all <- df %>% 
-  select(age, target) %>%
-  arrange(age) %>%
-  mutate(Csum = cumsum(age),
-         CDF = Csum / sum(age))
+values_all <- sort(df[[predictor]])
+values_disease <- sort((df %>% filter(target == 1))[[predictor]])
 
+p <- length(values_disease) / length(values_all)
 
-df_disease <- df %>% 
-  filter(target == 2) %>%
-  select(age, target) %>%
-  arrange(age) %>%
-  mutate(Csum = cumsum(age),
-         CDF = Csum / sum(age))
+cdf_all <- cumsum(values_all) / sum(values_all)
+cdf_disease <- cumsum(values_disease) / sum(values_disease)
 
 
+df_cap <- tibble(u = vector("numeric"),
+                 cap = vector("numeric"),
+                 cap_perfect = vector("numeric"))
 
-df_all_perfect <- df %>% 
-  select(target) %>%
-  arrange(target) %>%
-  mutate(Csum = cumsum(target),
-         CDF = Csum / sum(target))
-
-
-df_disease_perfect <- df %>% 
-  filter(target == 2) %>%
-  select(target) %>%
-  arrange(target) %>%
-  mutate(Csum = cumsum(target),
-         CDF = Csum / sum(target))
-
-
-
-
-F_D <- function(x){
-temp <- df_disease %>%
-  filter(Csum <= x)
-i <- nrow(temp)
-return(df_disease$CDF[i])
-}
-
-F_inverse <- function(u){
-  temp <- df_all %>%
-    filter(CDF <= u)
-  i <- nrow(temp)
-  return(df_all$Csum[i])
-}
-
-CAP <- function(u){
-  return(F_D(F_inverse(u)))
-}
-
-
-
-
-
-
-F_D_perfect <- function(x){
-  temp <- df_disease_perfect %>%
-    filter(Csum <= x)
-  i <- nrow(temp)
-  return(df_disease$CDF[i])
-}
-
-F_inverse_perfect <- function(u){
-  temp <- df_all_perfect %>%
-    filter(CDF <= u)
-  i <- nrow(temp)
-  return(df_all$Csum[i])
-}
-
-CAP_perfect <- function(u){
-  return(F_D_perfect(F_inverse_perfect(u)))
-}
-
-
-df_cap <-  tibble(u = seq(0.01, 1, by=0.01),
-                  cap = map_dbl(u, CAP),
-                  cap_perfect = map_dbl(u, CAP_perfect))
-
-ggplot(df_cap) +
-  geom_line(aes(u, cap)) + 
-  geom_line(aes(u, u), linetype = 2) + 
-  geom_line(aes(u, cap_perfect), linetype = 2) + 
-  labs(x = "F", y = "F_disease")
+for(u in seq(0, 1, by=(1-0.1) / 10)){
+  tmp <- cdf_all[cdf_all <= u]
+  s <- tmp[length(tmp)]
+  s <- values_all[which(cdf_all == s)]
   
+  #F_D(F^-1(u)) = F_D(s)
+  cap <- values_disease[values_disease <= s]
+  cap <- cdf_disease[length(cap)]
+  
+  if(length(cap) == 0) cap <- 0
+  if(u > p) cap_perfect <- 1
+  else cap_perfect <- u * (1/p)
+  df_cap %<>% add_row(u = u, cap = cap, cap_perfect = cap_perfect)
+}
+
+ggplot(df_cap) + 
+  geom_line(aes(x = u, y = cap)) + 
+  geom_line(aes(x = u, y = cap_perfect), color = "red") +
+  geom_segment(aes(x = 0, xend = 1 , y = 0, yend = 1), linetype = 2) +
+  labs(
+    x = "u",
+    y = "CAP(u)",
+    title = paste("Cumulative Accuracy Profile of", predictor)
+  ) + 
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0)
+  )
