@@ -30,3 +30,8 @@ get_training_df <- function(p = 0.8) {
   # testing  <- df[-inTraining,]
   return(training)
 }
+
+odds_ratio  <- function(df, variable) {
+    cross_class_table  <- table(df$target, df[[variable]])
+    or  <- (cross_class_table[2,2] / cross_class_table[1,2]) / (cross_class_table[2,1] / cross_class_table[1,1])
+}
