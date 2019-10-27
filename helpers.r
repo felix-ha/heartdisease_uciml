@@ -1,7 +1,7 @@
 library(tidyverse)
 library(caret)
 
-# create clean data set: e. g. sex is a numeric vector, needs to be a factor
+
 get_df <- function(df){
   result <- df %>%
     transmute(age,
@@ -24,9 +24,9 @@ get_df <- function(df){
 get_training_df <- function(p = 0.8) {
   set.seed(25)
   df_raw <- read_csv("data.csv")
-  heart <- get_df(df_raw)
-  inTraining <- createDataPartition(heart$target, p = p, list = FALSE)
-  training <- heart[ inTraining,]
+  df <- get_df(df_raw)
+  inTraining <- createDataPartition(df$target, p = p, list = FALSE)
+  training <- df[inTraining,]
   # testing  <- df[-inTraining,]
   return(training)
 }
