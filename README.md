@@ -8,4 +8,8 @@ This repository presents methods for classificaiton with the heart disease data 
 
     1.2 [EDA of categorial data.](https://github.com/felix-ha/heartdisease_uciml/blob/master/EDA_of_categorial_data.ipynb)
 
+    1.3 [EDA of continuous data.](https://github.com/felix-ha/heartdisease_uciml/blob/master/EDA_of_continuous_data.ipynb)
+
+   1.4 [Summary of univariate EDA.](https://github.com/felix-ha/heartdisease_uciml/blob/master/Summary_of_univariate_EDA.ipynb)
+
 
