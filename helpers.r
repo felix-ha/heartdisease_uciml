@@ -48,16 +48,26 @@ get_clean_df <- function(df) {
     )
 }
 
-get_training_df <- function(p = 0.8) {
+get_training_df_clean <- function(p = 0.8) {
   set.seed(25)
   df_raw <- read_csv("data.csv")
-  #df <- get_df(df_raw)
   df <- get_clean_df(df_raw)
   inTraining <- createDataPartition(df$target, p = p, list = FALSE)
   training <- df[inTraining,]
   # testing  <- df[-inTraining,]
   return(training)
 }
+
+get_training_df <- function(p = 0.8) {
+  set.seed(25)
+  df_raw <- read_csv("data.csv")
+  df <- get_df(df_raw)
+  inTraining <- createDataPartition(df$target, p = p, list = FALSE)
+  training <- df[inTraining,]
+  # testing  <- df[-inTraining,]
+  return(training)
+}
+
 
 
 cross_validation_52 <- function(learner_A, learner_B, df){
@@ -126,10 +136,10 @@ cross_validation <- function(learner_A, learner_B, df){
 
 cross_validation_selection <- function(learner_A, learner_B){
   # use p = 0.81 to get equally sized sets S_1 and S_2
-  df <- get_training_df(p = 0.81)
+  df <- get_training_df_clean(p = 0.81)
   cv_52_result <- cross_validation_52(learner_A, learner_B, df)
 
-  df <- get_training_df(p = 0.8)
+  df <- get_training_df_clean(p = 0.8)
   model_result<- cross_validation(learner_A, learner_B, df)
 
     return(list(model_result = model_result, t = cv_52_result$t, p_value = cv_52_result$p_value))
