@@ -12,6 +12,8 @@ This repository presents methods for classificaiton with the heart disease data 
 
     1.4 [Summary of univariate EDA.](https://github.com/felix-ha/heartdisease_uciml/blob/master/Summary_of_univariate_EDA.ipynb)
 
-2. Model building with logistic regression
+2. [Comparison of models with cross validation](https://github.com/felix-ha/heartdisease_uciml/blob/master/Comparison_of_models_with_cross_validation.ipynb)
 
-    2.1. [Problem with rare categorial data.](http://localhost:8888/notebooks/Problem_with_rare_categorial%20data.ipynb)
+3. Model building with logistic regression
+
+    3.1. [Problem with rare categorial data.](http://localhost:8888/notebooks/Problem_with_rare_categorial%20data.ipynb)
