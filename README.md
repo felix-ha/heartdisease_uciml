@@ -21,3 +21,7 @@ This repository presents methods for classificaiton with the heart disease data 
     3.2 [Variable Selection](https://github.com/felix-ha/heartdisease_uciml/blob/master/Variable_Selection_Hosmer.ipynb)
 
     3.3 [Model Building Hosmer](https://github.com/felix-ha/heartdisease_uciml/blob/master/Model_Building_Hosmer.ipynb)
+
+    3.4 [Data pre-Processing](https://github.com/felix-ha/heartdisease_uciml/blob/master/Data_pre_processing.ipynb)
+
+    
