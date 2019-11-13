@@ -17,3 +17,7 @@ This repository presents methods for classificaiton with the heart disease data 
 3. Model building with logistic regression
 
     3.1. [Problem with rare categorial data.](http://localhost:8888/notebooks/Problem_with_rare_categorial%20data.ipynb)
+
+    3.2 [Variable Selection](https://github.com/felix-ha/heartdisease_uciml/blob/master/Variable_Selection_Hosmer.ipynb)
+
+    3.3 [Model Building Hosmer](https://github.com/felix-ha/heartdisease_uciml/blob/master/Model_Building_Hosmer.ipynb)
