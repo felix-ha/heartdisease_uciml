@@ -24,4 +24,11 @@ This repository presents methods for classificaiton with the heart disease data 
 
     3.4 [Data pre-Processing](https://github.com/felix-ha/heartdisease_uciml/blob/master/Data_pre_processing.ipynb)
 
+    Selection with Ridge and LASSO (pre process data)
+
+    LASSO
+
+    Elastic net
+
+
     
