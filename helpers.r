@@ -167,3 +167,49 @@ plot_result <- function(model_result){
           plot.title = element_text(hjust = 0)
     )
 }
+
+
+cv_compare_learner <- function(learners, df){
+  set.seed(25)
+  number_of_folds <- 10
+  folds <- createFolds(df$target, k = number_of_folds)
+  
+  model_result <- tibble(model = vector("character"),
+                         auc = vector("numeric"))
+  
+  for(learner in learners){
+    for(fold_index in c(1:number_of_folds)){
+      training <- df[-folds[[fold_index]],]
+      test <- df[folds[[fold_index]],]
+      
+      result <- learner(training, test)
+      
+      
+      model_result %<>%
+        add_row(model = result[[1]], auc = result[[2]])
+      
+    }
+  }
+  
+  return(model_result)
+}
+
+
+plot_best_learners <- function(model_result){
+  
+  
+  models <- (model_result %>% distinct(model))[["model"]]
+  model_result %>%
+    mutate(model = factor(model, levels = models)) %>%
+    ggplot(aes(x = model, y = auc))+
+    geom_boxplot() +
+    labs(
+      x = "Models",
+      y = "AUC",
+      title = "Cross validation comparison of models"
+    ) + 
+    theme_bw() + 
+    theme(panel.grid.major.x = element_blank(),
+          plot.title = element_text(hjust = 0)
+    )
+}

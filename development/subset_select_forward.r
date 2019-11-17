@@ -7,7 +7,7 @@ source("utils.r")
 # forward selection: selects "number_of_variables_to_select" and chooses the best model with
 # the avg auc (does not stop if the next model has a smaller auc)
 
-df_raw <- read_csv("data.csv")
+df_raw <- read_csv("./data.csv")
 heart <- get_df(df_raw)
 heart <- get_training_df(heart)
 
