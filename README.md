@@ -3,7 +3,7 @@
 This repository presents methods for classificaiton with the heart disease data set from the uci machine learning repository [uci machine learning repository](https://archive.ics.uci.edu/ml/datasets/Heart+Disease). Main focus will be logistic regression and decision trees. 
 
 
-Current Best Models
+[Current Best Models](https://github.com/felix-ha/heartdisease_uciml/blob/master/Best_models.ipynb)
 
  1. Exploratory data analysis (EDA)
  
@@ -27,9 +27,9 @@ Current Best Models
 
     3.4 [Data pre-Processing](https://github.com/felix-ha/heartdisease_uciml/blob/master/Data_pre_processing.ipynb)
 
-    Selection with Ridge and LASSO (pre process data)
+    [Selection with Ridge](https://github.com/felix-ha/heartdisease_uciml/blob/master/Ridge.ipynb)
 
-    LASSO
+    [LASSO](https://github.com/felix-ha/heartdisease_uciml/blob/master/LASSO.ipynb)
 
     Elastic net
 

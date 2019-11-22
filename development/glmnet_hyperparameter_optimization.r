@@ -85,7 +85,6 @@ result %<>%
           lambda = x_current[2],
           k = iter)
 
-print(top_n(result, n = 1)$auc)
 
 })
 
