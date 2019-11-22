@@ -27,13 +27,13 @@ This repository presents methods for classificaiton with the heart disease data 
 
     3.4 [Data pre-Processing](https://github.com/felix-ha/heartdisease_uciml/blob/master/Data_pre_processing.ipynb)
 
-    [Selection with Ridge](https://github.com/felix-ha/heartdisease_uciml/blob/master/Ridge.ipynb)
+    3.5 [Selection with Ridge](https://github.com/felix-ha/heartdisease_uciml/blob/master/Ridge.ipynb)
 
-    [LASSO](https://github.com/felix-ha/heartdisease_uciml/blob/master/LASSO.ipynb)
+    3.6 [LASSO](https://github.com/felix-ha/heartdisease_uciml/blob/master/LASSO.ipynb)
 
-    Elastic net
+    3.7 [Elastic net](https://github.com/felix-ha/heartdisease_uciml/blob/master/Elastic_net.ipynb)
 
-    Forward Selection
+    3.8 [Forward Selection](http://localhost:8888/notebooks/Forward_Selection.ipynb)
 
 
     
