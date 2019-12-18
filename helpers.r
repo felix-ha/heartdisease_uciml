@@ -51,7 +51,8 @@ get_clean_df <- function(df) {
 
 get_training_df_clean <- function(p = 0.8) {
   set.seed(25)
-  df_raw <- read_csv("data.csv")
+  suppressMessages({
+  df_raw <- read_csv("data.csv")})
   df <- get_clean_df(df_raw)
   inTraining <- createDataPartition(df$target, p = p, list = FALSE)
   training <- df[inTraining,]
