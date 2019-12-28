@@ -204,6 +204,7 @@ plot_best_learners <- function(model_result){
     mutate(model = factor(model, levels = models)) %>%
     ggplot(aes(x = model, y = auc))+
     geom_boxplot() +
+    geom_jitter(width = 0.05, alpha = 0.25) +
     labs(
       x = "Models",
       y = "AUC",
