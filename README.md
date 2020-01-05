@@ -1,9 +1,6 @@
-# heartdisease_uciml
+ # heartdisease_uciml
 
 This repository presents methods for classificaiton with the heart disease data set from the uci machine learning repository [uci machine learning repository](https://archive.ics.uci.edu/ml/datasets/Heart+Disease). Main focus will be logistic regression and decision trees. 
-
-
-[Current Best Models](https://github.com/felix-ha/heartdisease_uciml/blob/master/Best_models.ipynb)
 
  1. Exploratory data analysis (EDA)
  
@@ -33,7 +30,30 @@ This repository presents methods for classificaiton with the heart disease data 
 
     3.7 [Elastic net](https://github.com/felix-ha/heartdisease_uciml/blob/master/Elastic_net.ipynb)
 
-    3.8 [Forward Selection](http://localhost:8888/notebooks/Forward_Selection.ipynb)
+    3.8 [Forward Selection](https://github.com/felix-ha/heartdisease_uciml/blob/master/Forward_Selection.ipynb)
+
+4. Tree based Models
+    
+    4.1 [Decision Tree](https://github.com/felix-ha/heartdisease_uciml/blob/master/Grid_search_decision_tree.ipynb)
+
+    4.2 [Bagging](https://github.com/felix-ha/heartdisease_uciml/blob/master/Grid_search_bagging.ipynb)
+
+    4.3 [Random Forest](https://github.com/felix-ha/heartdisease_uciml/blob/master/Grid_search_random_forest.ipynb)
+
+    4.4 [Gradient Boosting](https://github.com/felix-ha/heartdisease_uciml/blob/master/Gridsearch_gbm.ipynb)
+
+    4.5 [XGBoost](https://github.com/felix-ha/heartdisease_uciml/blob/master/Grid_search_xgboost.ipynb)
+
+
+5. Conclusion
+
+[Evaluation of all models](https://github.com/felix-ha/heartdisease_uciml/blob/master/Best_models.ipynb)
+
+ToDo: 
+order models in final plot
+calculate test auc for all models
+
+
 
 
     

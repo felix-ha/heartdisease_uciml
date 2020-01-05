@@ -202,6 +202,7 @@ plot_best_learners <- function(model_result){
   models <- (model_result %>% distinct(model))[["model"]]
   model_result %>%
     mutate(model = factor(model, levels = models)) %>%
+    mutate(model = fct_reorder(model, auc, .desc = TRUE)) %>%
     ggplot(aes(x = model, y = auc))+
     geom_boxplot() +
     geom_jitter(width = 0.05, alpha = 0.25) +
