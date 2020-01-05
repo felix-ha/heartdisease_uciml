@@ -6,6 +6,7 @@ Purpose of this repo was to learn R. That is the reason I implemented the k-fold
 
 None of the models is really outperforming.
 
+The read dot indicates the AUC of the test set. 
 ![Summary of models](result.png "Summary of models")
 
 
