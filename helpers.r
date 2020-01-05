@@ -60,6 +60,16 @@ get_training_df_clean <- function(p = 0.8) {
   return(training)
 }
 
+get_test_df_clean <- function(p = 0.8) {
+  set.seed(25)
+  suppressMessages({
+    df_raw <- read_csv("data.csv")})
+  df <- get_clean_df(df_raw)
+  inTraining <- createDataPartition(df$target, p = p, list = FALSE)
+  testing  <- df[-inTraining,]
+  return(testing)
+}
+
 get_training_df <- function(p = 0.8) {
   set.seed(25)
   df_raw <- read_csv("data.csv")
@@ -196,16 +206,35 @@ cv_compare_learner <- function(learners, df){
 }
 
 
-plot_best_learners <- function(model_result){
+calculate_test_auc <- function(learners, df_training, df_test) {
+  
+  model_result <- tibble(model = vector("character"),
+                         auc = vector("numeric"))
+  
+  for(learner in learners){
+    
+    result <- learner(df_training, df_test)
+    
+    
+    model_result %<>%
+      add_row(model = result[[1]], auc = result[[2]])
+    
+  }
+  
+  return(model_result)
+}
+
+
+plot_best_learners <- function(model_result, model_result_test){
   
   
   models <- (model_result %>% distinct(model))[["model"]]
-  model_result %>%
+  p <- model_result %>%
     mutate(model = factor(model, levels = models)) %>%
     mutate(model = fct_reorder(model, auc, .desc = TRUE)) %>%
     ggplot(aes(x = model, y = auc))+
     geom_boxplot() +
-    geom_jitter(width = 0.05, alpha = 0.25) +
+    geom_jitter(width = 0.05, alpha = 0.25) + 
     labs(
       x = "Models",
       y = "AUC",
@@ -213,6 +242,10 @@ plot_best_learners <- function(model_result){
     ) + 
     theme_bw() + 
     theme(panel.grid.major.x = element_blank(),
+          axis.text.x = element_text(angle = 90),
           plot.title = element_text(hjust = 0)
     )
+  
+  p + geom_point(mapping = aes(model, auc), data = model_result_test,
+                 size = 5,  color="red")
 }
